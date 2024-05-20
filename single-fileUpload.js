@@ -1,5 +1,8 @@
 import express from "express";
 import multer from "multer";
+
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 // import sharp from "sharp";
 
 const singleRouter = express.Router();
@@ -30,6 +33,26 @@ singleRouter.post(
     try {
       res.json({
         status: "success",
+      });
+    } catch (error) {
+      res.send(error);
+    }
+  }
+);
+
+singleRouter.post(
+  "/user/upload/db",
+  upload.single("file"),
+  async (req, res, next) => {
+    try {
+      const user = await prisma.user.create({
+        data: {
+          image: req.file.filename,
+          name: "syam",
+        },
+      });
+      res.status(200).json({
+        data: "success",
       });
     } catch (error) {
       res.send(error);
